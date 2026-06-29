@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Một lá thư tình yêu chân thành và sâu sắc">
+    <title>✨ Có một điều dành riêng cho em ✨</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- Three.js for 3D background -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <!-- 3D Background Canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- UI Overlay -->
+    <div id="ui-container">
+        
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="screen active">
+            <h1 class="glow-text">✨ Có một điều dành riêng cho em ✨</h1>
+            <button id="open-letter-btn" class="glass-btn">💌 Mở lá thư</button>
+        </div>
+
+        <!-- Main Content Screen -->
+        <div id="main-screen" class="screen hidden">
+            <!-- Envelope Animation -->
+            <div id="envelope-container">
+                <div class="envelope">
+                    <div class="flap"></div>
+                    <div class="letter-paper"></div>
+                    <div class="bottom-flap"></div>
+                </div>
+            </div>
+
+            <div id="text-container">
+                <p id="typewriter-text"></p>
+            </div>
+
+            <!-- Heart and Rotating Images -->
+            <div id="heart-gallery-container" class="hidden">
+                <div class="gallery-wrapper">
+                    <!-- Rotating Images (dùng 5 ảnh thật đầu tiên) -->
+                    <div class="image-spinner">
+                        <img src="z7987408132280_b9515decb7cbd6c53dadfa29886b0fc3.jpg" alt="Memory 1" style="--i:1;">
+                        <img src="z7987408132659_fa4cae9623a20bfc302db75b13a3d9d7.jpg" alt="Memory 2" style="--i:2;">
+                        <img src="z7987408135527_557b186a51bd96111cda97acfb01214a.jpg" alt="Memory 3" style="--i:3;">
+                        <img src="z7987408139590_40014b19a30b67cd19be74b47874628b.jpg" alt="Memory 4" style="--i:4;">
+                        <img src="z7987408144442_8baad70d77ec90ada8533ad1f51138b9.jpg" alt="Memory 5" style="--i:5;">
+                    </div>
+                    <!-- Beating Heart -->
+                    <div class="beating-heart"></div>
+                </div>
+                
+                <button id="final-btn" class="glass-btn hidden">❤️ Anh xin lỗi...</button>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- Image Lightbox Overlay -->
+    <div id="lightbox">
+        <div class="lightbox-backdrop"></div>
+        <div class="lightbox-content">
+            <img id="lightbox-img" src="" alt="Zoomed Memory">
+            <button id="close-lightbox" class="glass-btn">✕ Đóng</button>
+        </div>
+    </div>
+
+    <!-- Audio Element -->
+    <audio id="bg-music" src="music.mp3" loop></audio>
+
+    <script src="script.js"></script>
+</body>
+</html>
