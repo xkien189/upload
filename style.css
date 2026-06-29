@@ -1,9 +1,9 @@
 :root {
     --primary: #ff6b81;
     --secondary: #ff4757;
-    --bg-dark: #0f0c29;
-    --bg-mid: #302b63;
-    --bg-light: #24243e;
+    --bg-dark: #000000;
+    --bg-mid: #020108;
+    --bg-light: #060412;
     --text-color: #f1f2f6;
     --glass-bg: rgba(255, 255, 255, 0.05);
     --glass-border: rgba(255, 255, 255, 0.1);
@@ -62,6 +62,44 @@ body {
 }
 .screen.active { opacity: 1; pointer-events: all; }
 .hidden { display: none !important; }
+
+/* ---- Loading Screen ---- */
+#loading-screen {
+    position: fixed; top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: var(--bg-dark);
+    z-index: 1000;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    transition: opacity 0.8s ease;
+}
+
+.loader-heart {
+    font-size: 3rem;
+    animation: heartbeat 1.2s infinite;
+    filter: drop-shadow(0 0 15px rgba(255, 71, 87, 0.8));
+    margin-bottom: 20px;
+}
+
+#loading-screen p {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-family: 'Quicksand', sans-serif;
+}
+
+/* ---- Audio Control ---- */
+#audio-control {
+    position: absolute;
+    top: 20px; right: 20px;
+    z-index: 100;
+    padding: 12px;
+    font-size: 1.5rem;
+    border-radius: 50%;
+    width: 50px; height: 50px;
+    display: flex; justify-content: center; align-items: center;
+    opacity: 0.8;
+}
+#audio-control:hover { opacity: 1; }
 
 /* ---- Typography ---- */
 .glow-text {
@@ -203,14 +241,95 @@ body {
 
 /* ---- Typewriter ---- */
 #text-container {
-    width: 90%; max-width: 650px; min-height: 150px;
+    width: 94%;
+    max-width: min(860px, 94vw);
+    min-height: 200px;
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
-    backdrop-filter: blur(12px); border-radius: 20px;
-    padding: 30px; margin-top: 20px;
-    text-align: center; font-size: 1.2rem;
-    line-height: 1.8; opacity: 0;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    backdrop-filter: blur(14px); border-radius: 24px;
+    padding: 42px 48px;
+    margin-top: 20px;
+    text-align: center;
+    font-size: 1.4rem;
+    line-height: 2;
+    opacity: 0;
+    transform: scale(0.6);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+}
+
+/* ---- Dove Animation ---- */
+#dove-scene {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 50;
+    pointer-events: none;
+}
+
+#dove-fly {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#dove-svg {
+    filter:
+        drop-shadow(0 0 18px rgba(255,255,255,0.7))
+        drop-shadow(0 6px 20px rgba(180,180,255,0.3));
+    overflow: visible;
+}
+
+/* Wing flap keyframes */
+@keyframes flapTop {
+    0%   { transform: rotate(0deg) scaleY(1); }
+    100% { transform: rotate(-48deg) scaleY(0.85); }
+}
+
+@keyframes flapBottom {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(26deg); }
+}
+
+#wing-top {
+    transform-box: fill-box;
+    transform-origin: 55% 88%;
+    animation: flapTop 0.28s ease-in-out infinite alternate;
+}
+
+#wing-bottom {
+    transform-box: fill-box;
+    transform-origin: 50% 12%;
+    animation: flapBottom 0.28s ease-in-out infinite alternate;
+}
+
+/* Mini letter drop — absolute-centered in dove-scene, independent of dove-fly */
+#mini-letter {
+    position: absolute;
+    top: calc(50% - 34px);  /* centered: 68/2 = 34 */
+    left: calc(50% - 45px); /* centered: 90/2 = 45 */
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    filter: drop-shadow(0 6px 16px rgba(255, 210, 0, 0.8));
+    z-index: 55;
+    pointer-events: none;
+}
+
+.ml-sparkle {
+    font-size: 1.2rem;
+    margin-top: 4px;
+    animation: sparklePulse 1s ease-in-out infinite;
+    opacity: 0;
+}
+
+@keyframes sparklePulse {
+    0%, 100% { transform: scale(1);   opacity: 0.7; }
+    50%       { transform: scale(1.4); opacity: 1; }
 }
 
 /* ---- Gallery / Heart ---- */

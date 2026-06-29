@@ -11,6 +11,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loader-heart">❤️</div>
+        <p>Đang chuẩn bị những điều tuyệt vời nhất...</p>
+    </div>
+
     <!-- 3D Background Canvas -->
     <canvas id="bg-canvas"></canvas>
 
@@ -20,35 +26,80 @@
     <!-- UI Overlay -->
     <div id="ui-container">
 
+        <!-- Audio Control Button -->
+        <button id="audio-control" class="glass-btn hidden" title="Tắt/Mở Nhạc">
+            🔊
+        </button>
+
         <!-- Welcome Screen -->
         <div id="welcome-screen" class="screen active">
-            <h1 class="glow-text">✨ Có một điều dành riêng cho em ✨</h1>
-
-            <!-- Live Countdown Timer -->
-            <div id="love-timer">
-                <div class="timer-label">💕 Chúng ta đã bên nhau được</div>
-                <div class="timer-digits" id="timer-display">
-                    <span class="t-block"><span id="t-days">0</span><small>ngày</small></span>
-                    <span class="t-sep">:</span>
-                    <span class="t-block"><span id="t-hours">00</span><small>giờ</small></span>
-                    <span class="t-sep">:</span>
-                    <span class="t-block"><span id="t-minutes">00</span><small>phút</small></span>
-                    <span class="t-sep">:</span>
-                    <span class="t-block"><span id="t-seconds">00</span><small>giây</small></span>
-                </div>
-            </div>
+            <h1 class="glow-text">💕 Em bé ơi 💕
+                <br>✨ Có những điều ảnh chỉ muốn dành riêng cho em ✨</h1>
 
             <button id="open-letter-btn" class="glass-btn">💌 Mở lá thư</button>
         </div>
 
         <!-- Main Content Screen -->
         <div id="main-screen" class="screen hidden">
-            <!-- Envelope Animation -->
-            <div id="envelope-container">
-                <div class="envelope">
-                    <div class="flap"></div>
-                    <div class="letter-paper"></div>
-                    <div class="bottom-flap"></div>
+
+            <!-- ====== DOVE ANIMATION SCENE ====== -->
+            <div id="dove-scene">
+                <div id="dove-fly">
+                    <!-- Chú chim bồ câu SVG -->
+                    <svg id="dove-svg" viewBox="0 0 220 150" width="220" height="150" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Đuôi lông -->
+                        <path d="M168 82 C184 64 202 70 199 85 C186 78 170 87 168 90" fill="#e0e0e0"/>
+                        <path d="M170 76 C188 57 204 63 201 78 C187 71 172 80 170 84" fill="#ebebeb"/>
+
+                        <!-- Cánh dưới (animated) -->
+                        <g id="wing-bottom">
+                            <path d="M108 88 C128 104 166 102 177 90 C155 94 128 87 110 81" fill="#c8c8c8"/>
+                        </g>
+
+                        <!-- Thân -->
+                        <ellipse cx="118" cy="84" rx="58" ry="24" fill="white"/>
+
+                        <!-- Cánh trên (animated) -->
+                        <g id="wing-top">
+                            <path d="M108 76 C128 40 172 28 184 52 C160 52 132 64 112 80" fill="white"/>
+                            <path d="M108 79 C132 34 176 22 186 50 C160 50 133 66 112 82" fill="#f2f2f2" opacity="0.6"/>
+                        </g>
+
+                        <!-- Cổ -->
+                        <ellipse cx="70" cy="74" rx="24" ry="20" fill="white"/>
+
+                        <!-- Đầu -->
+                        <circle cx="47" cy="60" r="22" fill="white"/>
+
+                        <!-- Mỏ -->
+                        <path d="M27 58 L4 63 L27 68 Z" fill="#f5c518"/>
+                        <path d="M27 58 L4 63 L27 61" fill="#c9a000"/>
+
+                        <!-- Mắt -->
+                        <circle cx="40" cy="54" r="5" fill="#1a1a2e"/>
+                        <circle cx="38.5" cy="52.5" r="2" fill="white"/>
+                        <circle cx="40" cy="54" r="1" fill="#444"/>
+
+                    <!-- Glow dưới chim -->
+                        <ellipse cx="110" cy="142" rx="44" ry="6" fill="rgba(255,255,255,0.12)" id="dove-glow"/>
+                    </svg>
+                </div>
+                <!-- Lá thư nhỏ: ở NGOÀI dove-fly → không bị kéo theo chim -->
+                <div id="mini-letter">
+                    <svg width="90" height="68" viewBox="0 0 90 68">
+                        <defs>
+                            <linearGradient id="envG" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#fffdf0"/>
+                                <stop offset="100%" style="stop-color:#ffedb0"/>
+                            </linearGradient>
+                        </defs>
+                        <rect x="1" y="1" width="88" height="66" rx="6" fill="url(#envG)" stroke="#e8c020" stroke-width="2"/>
+                        <path d="M1 1 L45 36 L89 1" fill="none" stroke="#e8c020" stroke-width="2"/>
+                        <path d="M1 67 L33 36" fill="none" stroke="#ddb800" stroke-width="1.5"/>
+                        <path d="M89 67 L57 36" fill="none" stroke="#ddb800" stroke-width="1.5"/>
+                        <text x="45" y="58" text-anchor="middle" font-size="18" fill="#e84393" font-family="serif">❤</text>
+                    </svg>
+                    <div class="ml-sparkle">✨</div>
                 </div>
             </div>
 
@@ -68,7 +119,7 @@
                     </div>
                     <div class="beating-heart"></div>
                 </div>
-                <button id="final-btn" class="glass-btn hidden">❤️ Anh thương em nhiều lắm</button>
+                <button id="final-btn" class="glass-btn hidden">❤️ Waaaa nhìu nhìn hăm nè ❤️</button>
             </div>
         </div>
 
@@ -78,8 +129,7 @@
 
                 <!-- Animated heart + title -->
                 <div class="fw-heart">❤️</div>
-                <h2 class="fw-title">Anh thương em nhiều lắm!</h2>
-                <p class="fw-subtitle">Mỗi khoảnh khắc bên em là một điều kỳ diệu ✨</p>
+                <h2 class="fw-title">Anh thương em <br>nhiều lắm!</h2>
 
                 <!-- === GLOWING LOVE TIMER === -->
                 <div id="love-timer-fw">
@@ -111,8 +161,6 @@
                 <!-- Chỉnh sửa nội dung các dòng chữ bên dưới tùy ý -->
                 <div class="fw-messages">
                     <p class="fw-msg fw-msg--1">"Em là điều tuyệt vời nhất anh có trong đời"</p>
-                    <p class="fw-msg fw-msg--2">Từ 20·11·2025 — mãi mãi về sau 🌙</p>
-                    <p class="fw-msg fw-msg--3">Anh xin lỗi vì mọi điều chưa hoàn hảo... nhưng anh yêu em thật lòng ❤️</p>
                 </div>
 
             </div>

@@ -1,4 +1,17 @@
 // =============================================
+// === LOADING SCREEN & INITIALIZATION ===
+// =============================================
+window.addEventListener('load', () => {
+    const loadingScreen = document.getElementById('loading-screen');
+    if (loadingScreen) {
+        setTimeout(() => {
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => { loadingScreen.style.display = 'none'; }, 800);
+        }, 500); // minimal display time
+    }
+});
+
+// =============================================
 // === LOVE TIMER — Bắt đầu từ 20:00 ngày 20/11/2025 ===
 // =============================================
 const LOVE_START = new Date('2025-11-20T20:00:00+07:00');
@@ -60,21 +73,25 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 const particlesGeometry = new THREE.BufferGeometry();
-const particlesCount = 2500;
+const particlesCount = 5000;
 const posArray = new Float32Array(particlesCount * 3);
 const colorsArray = new Float32Array(particlesCount * 3);
 
 const colorPalette = [
-    new THREE.Color('#ff9a9e'), new THREE.Color('#fecfef'),
-    new THREE.Color('#a18cd1'), new THREE.Color('#ffffff'),
-    new THREE.Color('#ffecd2')
+    new THREE.Color('#ffffff'), // White
+    new THREE.Color('#fff9e6'), // Warm white
+    new THREE.Color('#e0f7fa'), // Cyan-ish white
+    new THREE.Color('#ffeaa7'), // Gold/Yellow
+    new THREE.Color('#ffb8b8')  // Soft pink
 ];
 
 for (let i = 0; i < particlesCount * 3; i += 3) {
-    posArray[i]   = (Math.random() - 0.5) * 20;
-    posArray[i+1] = (Math.random() - 0.5) * 20;
-    posArray[i+2] = (Math.random() - 0.5) * 15 - 5;
-    const c = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+    posArray[i]   = (Math.random() - 0.5) * 35; // Spread wider X
+    posArray[i+1] = (Math.random() - 0.5) * 35; // Spread wider Y
+    posArray[i+2] = (Math.random() - 0.5) * 30 - 5; // Spread deeper Z
+    
+    // Most stars are white/warm, only a few are colored
+    const c = (Math.random() > 0.3) ? colorPalette[0] : colorPalette[Math.floor(Math.random() * colorPalette.length)];
     colorsArray[i] = c.r; colorsArray[i+1] = c.g; colorsArray[i+2] = c.b;
 }
 
@@ -82,8 +99,8 @@ particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3
 particlesGeometry.setAttribute('color',    new THREE.BufferAttribute(colorsArray, 3));
 
 const particlesMaterial = new THREE.PointsMaterial({
-    size: 0.05, vertexColors: true,
-    transparent: true, opacity: 0.8,
+    size: 0.12, vertexColors: true,
+    transparent: true, opacity: 0.95,
     blending: THREE.AdditiveBlending
 });
 
@@ -169,14 +186,23 @@ scene.add(globeGroup);
 // === MOUSE + ANIMATION LOOP ===
 // =============================================
 let mouseX = 0, mouseY = 0;
+// Normalised mouse coordinates for raycaster
+const mouseNorm = new THREE.Vector2();
+
 document.addEventListener('mousemove', e => {
     mouseX = (e.clientX / window.innerWidth) - 0.5;
     mouseY = (e.clientY / window.innerHeight) - 0.5;
+    mouseNorm.x =  (e.clientX / window.innerWidth)  * 2 - 1;
+    mouseNorm.y = -(e.clientY / window.innerHeight) * 2 + 1;
 });
 
 const clock = new THREE.Clock();
 let isInsideGlobe = false;
 let isLightboxOpen = false;
+
+// Raycaster for hover effect
+const hoverRaycaster = new THREE.Raycaster();
+let hoveredPlane = null;
 
 function animate() {
     requestAnimationFrame(animate);
@@ -195,6 +221,29 @@ function animate() {
             camera.position.x += (mouseX * 0.3 - camera.position.x) * 0.002;
             camera.position.y += (-mouseY * 0.3 - camera.position.y) * 0.002;
             camera.lookAt(0, 0, 0);
+
+            // Hover effect
+            hoverRaycaster.setFromCamera(mouseNorm, camera);
+            const intersects = hoverRaycaster.intersectObjects(globeGroup.children);
+            
+            if (intersects.length > 0) {
+                const object = intersects[0].object;
+                if (hoveredPlane !== object) {
+                    if (hoveredPlane) {
+                        gsap.to(hoveredPlane.scale, { x: 1, y: 1, duration: 0.2 });
+                        gsap.to(hoveredPlane.material.color, { r: 1, g: 1, b: 1, duration: 0.2 });
+                    }
+                    hoveredPlane = object;
+                    gsap.to(hoveredPlane.scale, { x: 1.06, y: 1.06, duration: 0.2 });
+                    gsap.to(hoveredPlane.material.color, { r: 1, g: 0.85, b: 0.85, duration: 0.2 });
+                }
+            } else {
+                if (hoveredPlane) {
+                    gsap.to(hoveredPlane.scale, { x: 1, y: 1, duration: 0.2 });
+                    gsap.to(hoveredPlane.material.color, { r: 1, g: 1, b: 1, duration: 0.2 });
+                    hoveredPlane = null;
+                }
+            }
         }
     }
     renderer.render(scene, camera);
@@ -322,22 +371,40 @@ const bgMusic        = document.getElementById('bg-music');
 const textContainer  = document.getElementById('text-container');
 const typewriterText = document.getElementById('typewriter-text');
 const heartGallery   = document.getElementById('heart-gallery-container');
-const envelopeContainer = document.getElementById('envelope-container');
-const flap           = document.querySelector('.flap');
-const letterPaper    = document.querySelector('.letter-paper');
 const finalBtn       = document.getElementById('final-btn');
 const beatingHeart   = document.querySelector('.beating-heart');
 const imageSpinner   = document.querySelector('.image-spinner');
+// Dove elements
+const doveScene      = document.getElementById('dove-scene');
+const doveFly        = document.getElementById('dove-fly');
+const miniLetter     = document.getElementById('mini-letter');
+const mlSparkle      = document.querySelector('.ml-sparkle');
+const wingTopEl      = document.getElementById('wing-top');
+const wingBotEl      = document.getElementById('wing-bottom');
 
-const letterContent = "Gửi em,\nCó những điều anh luôn giấu kín, có những cảm xúc anh chưa từng nói ra. Thời gian qua, anh biết mình đã có những lúc chưa đủ tinh tế, chưa hiểu hết những mong muốn của em... Nhưng em biết không, mọi khoảnh khắc bên em đều là những ký ức tuyệt đẹp mà anh luôn trân trọng. Dù bầu trời có bao nhiêu vì sao, anh vẫn chỉ hướng về một người. Nhìn ngắm không gian này nhé, nó giống hệt như thế giới trong anh khi có em vậy...\n\n(Hãy chạm vào trái tim nhé ❤️)";
+const letterContent = "Gửi bé yêu,\nThời gian qua, anh biết mình đã có những lúc chưa đủ tinh tế, nhiều lúc chưa suy nghĩ được nhiều và làm bé buồn... Nhưng em bé à, mọi khoảnh khắc bên em đều là những ký ức tuyệt đẹp mà anh luôn trân trọng. Dù thế giới này có bao nhiêu điều đẹp đẽ đi chăng nữa, anh vẫn chỉ hướng về bé thôi. Vì với anh em là người đẹp nhất rồi. Anh thì hông biết gấp sao, nhưng  mà anh biết cách làm ra sao hihi. Bé cùng anh nhìn ngắm không gian này nhé, có thể nó chưa được đẹp nhưng nó là cả bầu trời mà anh muốn gửi tới bé í...\n\n(Hãy chạm vào trái tim nhé ❤️)";
+
+// Audio Controls
+const audioControlBtn = document.getElementById('audio-control');
+let isMuted = false;
+
+audioControlBtn.addEventListener('click', () => {
+    isMuted = !isMuted;
+    bgMusic.muted = isMuted;
+    audioControlBtn.innerHTML = isMuted ? '🔇' : '🔊';
+});
 
 // Open letter button
 openBtn.addEventListener('click', () => {
     bgMusic.volume = 0.7;
     bgMusic.play().catch(e => console.log('Audio:', e));
+    audioControlBtn.classList.remove('hidden');
 
     gsap.to(welcomeScreen, {
-        opacity: 0, duration: 1,
+        opacity: 0,
+        filter: 'blur(15px)',
+        duration: 1.2,
+        ease: 'power2.inOut',
         onComplete: () => {
             welcomeScreen.classList.remove('active');
             welcomeScreen.classList.add('hidden');
@@ -350,14 +417,80 @@ openBtn.addEventListener('click', () => {
 });
 
 function startMainSequence() {
+    // Show the dove scene overlay
+    doveScene.style.display = 'flex';
+
+    // Place dove at bottom-right of center
+    const startX =  window.innerWidth  * 0.38;
+    const startY =  window.innerHeight * 0.35;
+    gsap.set(doveFly,    { x: startX, y: startY, opacity: 0, scale: 0.45, rotation: 12 });
+    gsap.set(miniLetter, { opacity: 0, y: -30, scale: 1 }); // starts above center, falls in
+
     const tl = gsap.timeline();
-    tl.from(envelopeContainer, { opacity: 0, y: 50, duration: 1, ease: 'power2.out' })
-      .to(flap,        { rotateX: 180, duration: 1, ease: 'power2.inOut' }, '+=0.5')
-      .to(letterPaper, { y: -150, zIndex: 5, duration: 1.2, ease: 'power2.out' })
-      .to(envelopeContainer, { opacity: 0, scale: 0.8, duration: 1, ease: 'power2.in',
-          onComplete: () => { envelopeContainer.style.display = 'none'; }
+
+    // 1. Dove materialises
+    tl.to(doveFly, { opacity: 1, scale: 1, duration: 0.5, ease: 'power1.out' })
+
+    // 2. Fly in arc: first rise slightly, then glide to centre
+      .to(doveFly, {
+          x: startX * 0.4,
+          y: -window.innerHeight * 0.06,
+          rotation: 5,
+          duration: 1.3,
+          ease: 'power1.out'
+      })
+      .to(doveFly, {
+          x: 0, y: 0, rotation: 0,
+          duration: 1.0,
+          ease: 'power2.inOut'
+      })
+
+    // 3. Dove slows, gentle hover bob
+      .to(doveFly, { y: -14, duration: 0.28, ease: 'sine.inOut' })
+      .to(doveFly, { y:   6, duration: 0.28, ease: 'sine.inOut' })
+      .to(doveFly, { y:   0, duration: 0.22, ease: 'sine.inOut' })
+
+    // 4. Letter drops at screen center (independent of dove)
+      .to(miniLetter, {
+          opacity: 1, y: 0,
+          duration: 0.55,
+          ease: 'bounce.out'
+      }, '-=0.1')
+      .to(mlSparkle, { opacity: 1, duration: 0.3 })
+
+    // 5. Dove speeds wings and flies away upper-left
+      .add(() => {
+          wingTopEl.style.animationDuration = '0.14s';
+          wingBotEl.style.animationDuration = '0.14s';
       }, '+=0.5')
-      .to(textContainer, { opacity: 1, y: -20, duration: 1, onComplete: startTypewriter });
+      .to(doveFly, {
+          x: -window.innerWidth * 0.45,
+          y: -window.innerHeight * 0.38,
+          opacity: 0,
+          scale: 0.35,
+          rotation: -18,
+          duration: 1.1,
+          ease: 'power3.in'
+      })
+
+    // 6. Mini-letter zooms out & fills screen (transition to text)
+      .to(miniLetter, {
+          scale: 22,
+          opacity: 0,
+          duration: 0.75,
+          ease: 'power3.in',
+          transformOrigin: '50% 50%'
+      }, '-=0.6')
+
+    // 7. Hide dove scene, show text glass card
+      .add(() => { doveScene.style.display = 'none'; })
+      .to(textContainer, {
+          opacity: 1,
+          scale: 1,
+          duration: 0.9,
+          ease: 'back.out(1.4)',
+          onComplete: startTypewriter
+      });
 }
 
 function startTypewriter() {
@@ -384,7 +517,11 @@ function showGallery() {
 // Click Heart → Globe
 beatingHeart.addEventListener('click', () => {
     gsap.to([textContainer, imageSpinner, beatingHeart], {
-        opacity: 0, duration: 1,
+        opacity: 0,
+        filter: 'blur(10px)',
+        scale: 0.9,
+        duration: 1.2,
+        ease: 'power2.inOut',
         onComplete: () => {
             textContainer.style.display   = 'none';
             imageSpinner.style.display    = 'none';
@@ -393,9 +530,9 @@ beatingHeart.addEventListener('click', () => {
     });
 
     globeGroup.visible = true;
-    globeGroup.children.forEach(p => gsap.to(p.material, { opacity: 0.9, duration: 2 }));
+    globeGroup.children.forEach(p => gsap.to(p.material, { opacity: 0.9, duration: 2.5, ease: 'power1.inOut' }));
     isInsideGlobe = true;
-    gsap.to(camera.position, { z: 0, duration: 3, ease: 'power3.inOut' });
+    gsap.to(camera.position, { z: 0, duration: 3.5, ease: 'power3.inOut' });
 
     setTimeout(() => {
         finalBtn.classList.remove('hidden');
@@ -406,20 +543,22 @@ beatingHeart.addEventListener('click', () => {
 // Final button → Fireworks screen
 finalBtn.addEventListener('click', () => {
     // Transition to fireworks screen
-    gsap.to([heartGallery, finalBtn], { opacity: 0, duration: 0.8 });
+    gsap.to([heartGallery, finalBtn], { 
+        opacity: 0, filter: 'blur(15px)', scale: 0.8, duration: 1.2, ease: 'power2.in' 
+    });
 
     // Fade out globe
     globeGroup.children.forEach(p => gsap.to(p.material, { opacity: 0, duration: 1.5 }));
-    gsap.to(camera.position, { z: 4, duration: 2, ease: 'power2.inOut' });
+    gsap.to(camera.position, { z: 4, duration: 2.5, ease: 'power2.inOut' });
 
     setTimeout(() => {
         isInsideGlobe = false;
 
         // Show fireworks screen
         fireworksScreen.classList.remove('hidden');
-        gsap.set(fireworksScreen, { opacity: 0, scale: 0.85 });
+        gsap.set(fireworksScreen, { opacity: 0, scale: 0.85, filter: 'blur(10px)' });
         fireworksScreen.classList.add('active');
-        gsap.to(fireworksScreen, { opacity: 1, scale: 1, duration: 1.2, ease: 'back.out(1.3)' });
+        gsap.to(fireworksScreen, { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 1.5, ease: 'back.out(1.2)' });
 
         // Start fireworks canvas
         startFireworks();
