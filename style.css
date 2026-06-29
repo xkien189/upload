@@ -610,15 +610,31 @@ body {
 @media (max-width: 768px) {
     .image-spinner { width: 90px; height: 135px; }
     .image-spinner img { transform: rotateY(calc(var(--i) * 72deg)) translateZ(150px); }
-    .envelope { width: 280px; height: 180px; }
-    .envelope::before { border-left: 140px solid #fbc531; border-top: 90px solid transparent; border-bottom: 90px solid transparent; }
-    .envelope::after  { border-right: 140px solid #fbc531; border-top: 90px solid transparent; border-bottom: 90px solid transparent; }
-    .flap        { border-top: 105px solid #e1b12c; border-left: 140px solid transparent; border-right: 140px solid transparent; }
-    .bottom-flap { border-bottom: 90px solid #dcdde1; border-left: 140px solid transparent; border-right: 140px solid transparent; }
-    .letter-paper { width: 260px; height: 160px; }
-    #text-container { font-size: 1rem; padding: 20px; }
-    #love-timer { padding: 16px 20px; }
-    .t-block { min-width: 44px; padding: 6px 10px; }
-    .t-block span:first-child { font-size: 1.5rem; }
-    #fireworks-message { padding: 28px 24px; }
+    
+    /* Text Container & Mini Letter */
+    #text-container { font-size: 1rem; padding: 24px 20px; min-height: 150px; }
+    #mini-letter { transform: scale(0.8); }
+
+    /* Buttons */
+    .glass-btn { font-size: 1.1rem; padding: 12px 24px; }
+    #audio-control { top: 15px; right: 15px; width: 40px; height: 40px; font-size: 1.2rem; }
+
+    /* Fireworks Screen */
+    #fireworks-screen { padding-top: 20px; }
+    #fireworks-message { padding: 24px 15px; max-width: 95vw; }
+    .fw-heart { font-size: 2.5rem; }
+    .fw-title { font-size: 1.8rem; }
+    .fw-subtitle { font-size: 0.9rem; }
+    
+    /* Fireworks Timer */
+    #love-timer-fw { padding: 16px 10px; }
+    .fw-timer-digits { gap: 4px; }
+    .fw-t-block { min-width: 48px; padding: 8px 6px 6px; }
+    .fw-t-block span { font-size: 1.5rem; }
+    .fw-t-block small { font-size: 0.55rem; }
+    .fw-t-sep { font-size: 1.4rem; margin-bottom: 10px; }
+    
+    /* Editable Messages */
+    .fw-msg { font-size: 0.9rem; padding: 8px 12px; }
+    .fw-msg--1 { font-size: 0.95rem; }
 }
