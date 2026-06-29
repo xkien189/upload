@@ -326,7 +326,11 @@ function launchFirework() {
     const x = 80 + Math.random() * (fwCanvas.width - 160);
     const y = 60 + Math.random() * (fwCanvas.height * 0.55);
     const color = FIREWORK_COLORS[Math.floor(Math.random() * FIREWORK_COLORS.length)];
-    const count = 80 + Math.floor(Math.random() * 60);
+    
+    // Giảm số lượng hạt pháo hoa nếu là điện thoại (đỡ lag)
+    const isMobile = window.innerWidth <= 768;
+    const count = isMobile ? (25 + Math.floor(Math.random() * 20)) : (80 + Math.floor(Math.random() * 60));
+    
     for (let i = 0; i < count; i++) {
         fwParticles.push(new FwParticle(x, y, color));
     }
@@ -350,11 +354,15 @@ function startFireworks() {
     // Launch salvos
     const salvo = () => {
         if (!fwRunning) return;
-        const burstCount = 2 + Math.floor(Math.random() * 3);
+        
+        // Giảm số chùm pháo bắn cùng lúc trên điện thoại
+        const isMobile = window.innerWidth <= 768;
+        const burstCount = isMobile ? (1 + Math.floor(Math.random() * 1)) : (2 + Math.floor(Math.random() * 3));
+        
         for (let b = 0; b < burstCount; b++) {
             setTimeout(launchFirework, b * 120);
         }
-        setTimeout(salvo, 600 + Math.random() * 500);
+        setTimeout(salvo, (isMobile ? 800 : 600) + Math.random() * 500);
     };
     salvo();
 }

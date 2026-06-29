@@ -634,7 +634,7 @@ body {
     .fw-t-block small { font-size: 0.55rem; }
     .fw-t-sep { font-size: 1.4rem; margin-bottom: 10px; }
     
-    /* Editable Messages */
+    /* Editable Messages -----------------------*/
     .fw-msg { font-size: 0.9rem; padding: 8px 12px; }
     .fw-msg--1 { font-size: 0.95rem; }
 }
