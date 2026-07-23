@@ -3,183 +3,343 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Một lá thư tình yêu chân thành và sâu sắc">
-    <title>✨ Có một điều dành riêng cho em ✨</title>
+    <meta name="description" content="Ký ức thanh xuân — những khoảnh khắc không thể quên của nhóm bạn thân">
+    <title>🎬 Ký Ức Thanh Xuân — Những Ngày Không Quên</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div id="loading-screen">
-        <div class="loader-heart">❤️</div>
-        <p>Đang chuẩn bị những điều tuyệt vời nhất...</p>
+
+<!-- ===== LOADING SCREEN ===== -->
+<div id="loading-screen">
+    <div class="loader-film">
+        <div class="film-reel">
+            <div class="reel-hole"></div>
+            <div class="reel-hole"></div>
+            <div class="reel-hole"></div>
+            <div class="reel-hole"></div>
+        </div>
+        <div class="loader-bar-wrap">
+            <div class="loader-bar" id="loader-bar"></div>
+        </div>
     </div>
+    <p class="loader-text" id="loader-text">Đang tua lại những khoảnh khắc...</p>
+</div>
 
-    <!-- 3D Background Canvas -->
-    <canvas id="bg-canvas"></canvas>
+<!-- ===== PARTICLES CANVAS ===== -->
+<canvas id="particles-canvas"></canvas>
 
-    <!-- Fireworks Canvas (hidden until triggered) -->
-    <canvas id="fireworks-canvas"></canvas>
-
-    <!-- UI Overlay -->
-    <div id="ui-container">
-
-        <!-- Audio Control Button -->
-        <button id="audio-control" class="glass-btn hidden" title="Tắt/Mở Nhạc">
-            🔊
+<!-- ===== HERO INTRO ===== -->
+<section id="hero" class="section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <div class="film-strip-top"></div>
+        <p class="hero-sub">✦ Đại Học Hạ Long ✦ 2024 — 2025 ✦</p>
+        <h1 class="hero-title">KÝ ỨC<br><span class="hero-title-glow">THANH XUÂN</span></h1>
+        <p class="hero-desc">Những ngày tháng chúng ta sống hết mình — cùng nhau.</p>
+        <button id="start-btn" class="btn-start">
+            <span class="btn-icon">▶</span>
+            <span>Bắt Đầu Hành Trình</span>
         </button>
+        <div class="film-strip-bottom"></div>
+    </div>
+    <div class="scroll-hint" id="scroll-hint">
+        <span>Cuộn xuống để khám phá</span>
+        <div class="scroll-arrow"></div>
+    </div>
+</section>
 
-        <!-- Welcome Screen -->
-        <div id="welcome-screen" class="screen active">
-            <h1 class="glow-text">💕 Em bé ơi 💕
-                <br>✨ Có những điều ảnh chỉ muốn dành riêng cho em ✨</h1>
+<!-- ===== MEMORIES TIMELINE ===== -->
+<main id="main-content" class="hidden">
 
-            <button id="open-letter-btn" class="glass-btn">💌 Mở lá thư</button>
-        </div>
-
-        <!-- Main Content Screen -->
-        <div id="main-screen" class="screen hidden">
-
-            <!-- ====== DOVE ANIMATION SCENE ====== -->
-            <div id="dove-scene">
-                <div id="dove-fly">
-                    <!-- Chú chim bồ câu SVG -->
-                    <svg id="dove-svg" viewBox="0 0 220 150" width="220" height="150" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Đuôi lông -->
-                        <path d="M168 82 C184 64 202 70 199 85 C186 78 170 87 168 90" fill="#e0e0e0"/>
-                        <path d="M170 76 C188 57 204 63 201 78 C187 71 172 80 170 84" fill="#ebebeb"/>
-
-                        <!-- Cánh dưới (animated) -->
-                        <g id="wing-bottom">
-                            <path d="M108 88 C128 104 166 102 177 90 C155 94 128 87 110 81" fill="#c8c8c8"/>
-                        </g>
-
-                        <!-- Thân -->
-                        <ellipse cx="118" cy="84" rx="58" ry="24" fill="white"/>
-
-                        <!-- Cánh trên (animated) -->
-                        <g id="wing-top">
-                            <path d="M108 76 C128 40 172 28 184 52 C160 52 132 64 112 80" fill="white"/>
-                            <path d="M108 79 C132 34 176 22 186 50 C160 50 133 66 112 82" fill="#f2f2f2" opacity="0.6"/>
-                        </g>
-
-                        <!-- Cổ -->
-                        <ellipse cx="70" cy="74" rx="24" ry="20" fill="white"/>
-
-                        <!-- Đầu -->
-                        <circle cx="47" cy="60" r="22" fill="white"/>
-
-                        <!-- Mỏ -->
-                        <path d="M27 58 L4 63 L27 68 Z" fill="#f5c518"/>
-                        <path d="M27 58 L4 63 L27 61" fill="#c9a000"/>
-
-                        <!-- Mắt -->
-                        <circle cx="40" cy="54" r="5" fill="#1a1a2e"/>
-                        <circle cx="38.5" cy="52.5" r="2" fill="white"/>
-                        <circle cx="40" cy="54" r="1" fill="#444"/>
-
-                    <!-- Glow dưới chim -->
-                        <ellipse cx="110" cy="142" rx="44" ry="6" fill="rgba(255,255,255,0.12)" id="dove-glow"/>
-                    </svg>
-                </div>
-                <!-- Lá thư nhỏ: ở NGOÀI dove-fly → không bị kéo theo chim -->
-                <div id="mini-letter">
-                    <svg width="90" height="68" viewBox="0 0 90 68">
-                        <defs>
-                            <linearGradient id="envG" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" style="stop-color:#fffdf0"/>
-                                <stop offset="100%" style="stop-color:#ffedb0"/>
-                            </linearGradient>
-                        </defs>
-                        <rect x="1" y="1" width="88" height="66" rx="6" fill="url(#envG)" stroke="#e8c020" stroke-width="2"/>
-                        <path d="M1 1 L45 36 L89 1" fill="none" stroke="#e8c020" stroke-width="2"/>
-                        <path d="M1 67 L33 36" fill="none" stroke="#ddb800" stroke-width="1.5"/>
-                        <path d="M89 67 L57 36" fill="none" stroke="#ddb800" stroke-width="1.5"/>
-                        <text x="45" y="58" text-anchor="middle" font-size="18" fill="#e84393" font-family="serif">❤</text>
-                    </svg>
-                    <div class="ml-sparkle">✨</div>
-                </div>
-            </div>
-
-            <div id="text-container">
-                <p id="typewriter-text"></p>
-            </div>
-
-            <!-- Heart and Rotating Images -->
-            <div id="heart-gallery-container" class="hidden">
-                <div class="gallery-wrapper">
-                    <div class="image-spinner">
-                        <img src="z7987408132280_b9515decb7cbd6c53dadfa29886b0fc3.jpg" alt="Memory 1" style="--i:1;">
-                        <img src="z7987408132659_fa4cae9623a20bfc302db75b13a3d9d7.jpg" alt="Memory 2" style="--i:2;">
-                        <img src="z7987408135527_557b186a51bd96111cda97acfb01214a.jpg" alt="Memory 3" style="--i:3;">
-                        <img src="z7987408139590_40014b19a30b67cd19be74b47874628b.jpg" alt="Memory 4" style="--i:4;">
-                        <img src="z7987408144442_8baad70d77ec90ada8533ad1f51138b9.jpg" alt="Memory 5" style="--i:5;">
-                    </div>
-                    <div class="beating-heart"></div>
-                </div>
-                <button id="final-btn" class="glass-btn hidden">❤️ Waaaa nhìu nhìn hăm nè ❤️</button>
-            </div>
-        </div>
-
-        <!-- Fireworks Screen -->
-        <div id="fireworks-screen" class="screen hidden">
-            <div id="fireworks-message">
-
-                <!-- Animated heart + title -->
-                <div class="fw-heart">❤️</div>
-                <h2 class="fw-title">Anh thương em <br>nhiều lắm!</h2>
-
-                <!-- === GLOWING LOVE TIMER === -->
-                <div id="love-timer-fw">
-                    <div class="fw-timer-label">💕 Chúng ta đã yêu nhau được</div>
-                    <div class="fw-timer-digits">
-                        <div class="fw-t-block">
-                            <span id="fw-days">0</span>
-                            <small>ngày</small>
-                        </div>
-                        <div class="fw-t-sep">:</div>
-                        <div class="fw-t-block">
-                            <span id="fw-hours">00</span>
-                            <small>giờ</small>
-                        </div>
-                        <div class="fw-t-sep">:</div>
-                        <div class="fw-t-block">
-                            <span id="fw-minutes">00</span>
-                            <small>phút</small>
-                        </div>
-                        <div class="fw-t-sep">:</div>
-                        <div class="fw-t-block glow-seconds">
-                            <span id="fw-seconds">00</span>
-                            <small>giây</small>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- === EDITABLE MESSAGES === -->
-                <!-- Chỉnh sửa nội dung các dòng chữ bên dưới tùy ý -->
-                <div class="fw-messages">
-                    <p class="fw-msg fw-msg--1">"Em là điều tuyệt vời nhất anh có trong đời"</p>
-                </div>
-
-            </div>
-        </div>
-
+    <!-- Chapter title -->
+    <div class="chapter-intro" id="chapter-intro">
+        <div class="chapter-line"></div>
+        <span class="chapter-label">Chương I</span>
+        <h2 class="chapter-title">Những Ngày Đầu</h2>
+        <p class="chapter-desc">Khi tất cả chúng ta còn chưa quen nhau...</p>
+        <div class="chapter-line"></div>
     </div>
 
-    <!-- Image Lightbox Overlay -->
-    <div id="lightbox">
-        <div class="lightbox-backdrop"></div>
-        <div class="lightbox-content">
-            <img id="lightbox-img" src="" alt="Zoomed Memory">
-            <button id="close-lightbox" class="glass-btn">✕ Đóng</button>
+    <!-- Memory 1 — Lễ khai giảng -->
+    <div class="memory-card" id="mem1" data-index="1">
+        <div class="memory-media-wrap">
+            <div class="memory-number">01</div>
+            <img src="z8022019183566_df59fa0b2b99f079d78655c90b3bf5e1.jpg" alt="Lễ khai giảng Đại học Hạ Long" class="memory-img" loading="lazy">
+            <div class="memory-img-overlay"></div>
+            <div class="polaroid-tape"></div>
+        </div>
+        <div class="memory-info">
+            <div class="memory-tag">📅 Ngày khai giảng</div>
+            <h3 class="memory-title">Ngày Đầu Tiên Gặp Nhau</h3>
+            <p class="memory-text">
+                Lễ khai giảng Trường Đại học Hạ Long — lần đầu tiên chúng ta đứng cạnh nhau trong tấm ảnh lớp. Chưa ai thân với ai, chưa ai biết rằng đây sẽ là điểm khởi đầu của những kỷ niệm không thể nào quên. Nhìn lại tấm ảnh này, ai cũng hiểu: thanh xuân thực sự đã bắt đầu từ đây.
+            </p>
+            <div class="memory-emotion">🏫 Đại học Hạ Long</div>
         </div>
     </div>
 
-    <!-- Audio Element -->
-    <audio id="bg-music" src="inlove.mp3" loop></audio>
+    <!-- Chapter 2 -->
+    <div class="chapter-intro">
+        <div class="chapter-line"></div>
+        <span class="chapter-label">Chương II</span>
+        <h2 class="chapter-title">Thời Gian Trên Ghế Giảng Đường</h2>
+        <p class="chapter-desc">Học thì ít, nghịch thì nhiều...</p>
+        <div class="chapter-line"></div>
+    </div>
 
-    <script src="script.js"></script>
+    <!-- Memory 2 — Trong lớp -->
+    <div class="memory-card reverse" id="mem2" data-index="2">
+        <div class="memory-media-wrap">
+            <div class="memory-number">02</div>
+            <img src="z8022019193137_f0a7cd5acd798e01416c81cc298a31a0.jpg" alt="Chơi game trong lớp" class="memory-img" loading="lazy">
+            <div class="memory-img-overlay"></div>
+            <div class="polaroid-tape tape-right"></div>
+        </div>
+        <div class="memory-info">
+            <div class="memory-tag">📱 Trong giờ học</div>
+            <h3 class="memory-title">Hội Trốn Tiết Chơi Game</h3>
+            <p class="memory-text">
+                Giờ học mà tay không rời điện thoại — đặc sản của mấy đứa con trai. Thầy giảng đằng trước, đằng sau đang tâm chiến solo rank. Cái nụ cười bị bắt gặp mà vẫn không ngại ấy — đúng là chỉ có ở những ngày đại học mới có được.
+            </p>
+            <div class="memory-emotion">🎮 Giờ học "nghiêm túc"</div>
+        </div>
+    </div>
+
+    <!-- Memory 3 — Đêm hôm -->
+    <div class="memory-card" id="mem3" data-index="3">
+        <div class="memory-media-wrap">
+            <div class="memory-number">03</div>
+            <img src="z8022019193309_b02f86b6fc7a8e8736ec757e6dd982c8.jpg" alt="Đêm khuya cùng nhau" class="memory-img" loading="lazy">
+            <div class="memory-img-overlay dark-overlay"></div>
+            <div class="polaroid-tape"></div>
+            <div class="memory-night-badge">🌙 Đêm Muộn</div>
+        </div>
+        <div class="memory-info">
+            <div class="memory-tag">🌙 Đêm khuya</div>
+            <h3 class="memory-title">Đêm Không Ngủ Cùng Nhau</h3>
+            <p class="memory-text">
+                Những đêm lang thang không có lý do cụ thể — chỉ cần có nhau là đủ. Ánh đèn đường hắt lên khuôn mặt, tiếng xe máy xa xa, và cảm giác tự do tuyệt đối chỉ có ở tuổi đôi mươi. Không ai muốn về, ai cũng muốn đêm dài hơn một chút.
+            </p>
+            <div class="memory-emotion">🌃 Hạ Long về đêm</div>
+        </div>
+    </div>
+
+    <!-- VIDEO section -->
+    <div class="video-section" id="video-section">
+        <div class="video-label">
+            <span class="video-label-icon">🎬</span>
+            <span>Khoảnh Khắc Động</span>
+        </div>
+        <div class="video-wrap">
+            <video id="main-video" src="video.mp4" loop muted playsinline preload="metadata" class="main-video"></video>
+            <div class="video-controls">
+                <button class="vid-btn" id="vid-play-btn">▶</button>
+                <div class="vid-progress-wrap">
+                    <div class="vid-progress-bar" id="vid-progress"></div>
+                </div>
+                <button class="vid-btn" id="vid-mute-btn">🔊</button>
+            </div>
+            <div class="video-caption">Khoảnh khắc được lưu lại mãi mãi</div>
+        </div>
+    </div>
+
+    <!-- Chapter 3 -->
+    <div class="chapter-intro">
+        <div class="chapter-line"></div>
+        <span class="chapter-label">Chương III</span>
+        <h2 class="chapter-title">Những Dịp Đặc Biệt</h2>
+        <p class="chapter-desc">Sinh nhật, tụ tập, những buổi chiều bình thường trở nên phi thường...</p>
+        <div class="chapter-line"></div>
+    </div>
+
+    <!-- Memory 4 — Sinh nhật -->
+    <div class="memory-card reverse" id="mem4" data-index="4">
+        <div class="memory-media-wrap">
+            <div class="memory-number">04</div>
+            <img src="z8022019195044_72a3a3ff26d5523cc740d19a72c4de99.jpg" alt="Tiệc sinh nhật" class="memory-img" loading="lazy">
+            <div class="memory-img-overlay"></div>
+            <div class="polaroid-tape tape-right"></div>
+            <div class="memory-badge birthday-badge">🎂 Happy Birthday!</div>
+        </div>
+        <div class="memory-info">
+            <div class="memory-tag">🎂 Sinh nhật</div>
+            <h3 class="memory-title">Tiệc Sinh Nhật Bất Ngờ</h3>
+            <p class="memory-text">
+                Chiếc bánh kem đơn giản nhưng chứa đựng cả một bầu tình cảm. "Chúc mừng sinh nhật tôi — 8/10" — nét chữ nguệch ngoạc trên bánh nhưng ngọt vô cùng. Những khoảnh khắc như thế này nhắc nhở chúng ta: bạn bè thật sự không cần lý do hoành tráng để chứng minh tình cảm.
+            </p>
+            <div class="memory-emotion">🎉 Vui vẻ ngập tràn</div>
+        </div>
+    </div>
+
+    <!-- Memory 5 — Hai đứa -->
+    <div class="memory-card" id="mem5" data-index="5">
+        <div class="memory-media-wrap">
+            <div class="memory-number">05</div>
+            <img src="z8022019205489_a7803dcdee851dfa3d24c183982eb435.jpg" alt="Hai đứa bạn thân" class="memory-img" loading="lazy">
+            <div class="memory-img-overlay"></div>
+            <div class="polaroid-tape"></div>
+        </div>
+        <div class="memory-info">
+            <div class="memory-tag">👥 Bộ đôi</div>
+            <h3 class="memory-title">Đôi Bạn Thân Thiết</h3>
+            <p class="memory-text">
+                Hai đứa, một khoảnh khắc — góc chụp nghiêng 90 độ như thể cả thế giới đảo lộn nhưng tình bạn thì vẫn vậy. Những lúc như này chứng minh: không cần chuẩn bị, không cần pose đẹp — bạn bè thật sự luôn tạo ra những tấm ảnh đẹp nhất chỉ bằng sự tự nhiên.
+            </p>
+            <div class="memory-emotion">💫 Khoảnh khắc tự nhiên</div>
+        </div>
+    </div>
+
+    <!-- Memory 6 — Quán nước -->
+    <div class="memory-card reverse" id="mem6" data-index="6">
+        <div class="memory-media-wrap">
+            <div class="memory-number">06</div>
+            <img src="z8022019231174_f03060d8ffcab162d3aab101ee12406d.jpg" alt="Ngồi quán nước vỉa hè" class="memory-img" loading="lazy">
+            <div class="memory-img-overlay"></div>
+            <div class="polaroid-tape tape-right"></div>
+        </div>
+        <div class="memory-info">
+            <div class="memory-tag">🥤 Cà phê vỉa hè</div>
+            <h3 class="memory-title">Buổi Chiều Tà Vỉa Hè</h3>
+            <p class="memory-text">
+                Mấy ly nước chanh leo vỉa hè, gió lạnh mùa đông, và những câu chuyện không đầu không cuối. Ngồi nhìn xe cộ qua lại, nói đủ thứ chuyện trên trời dưới đất — đây là kiểu tụ tập đặc trưng nhất của bọn mình. Bình thường mà sao nhớ mãi.
+            </p>
+            <div class="memory-emotion">🌅 Chiều tà Hạ Long</div>
+        </div>
+    </div>
+
+    <!-- Memory 7 — Đi xe máy -->
+    <div class="memory-card" id="mem7" data-index="7">
+        <div class="memory-media-wrap">
+            <div class="memory-number">07</div>
+            <img src="z8022019233360_cc3aafa72ad560c7715f328b23691811.jpg" alt="Đi xe máy" class="memory-img" loading="lazy">
+            <div class="memory-img-overlay"></div>
+            <div class="polaroid-tape"></div>
+            <div class="memory-badge road-badge">🛵 Road Trip</div>
+        </div>
+        <div class="memory-info">
+            <div class="memory-tag">🛵 Phượt xe máy</div>
+            <h3 class="memory-title">Cùng Nhau Trên Những Con Đường</h3>
+            <p class="memory-text">
+                Hai đứa, một chiếc Vision, hai cái ba lô, và cả một thành phố Hạ Long phía trước. Gió thổi, đường dài — không cần biết đến đâu, chỉ cần có nhau là đủ. Những chuyến đi như này là bằng chứng rằng tuổi trẻ thực sự đẹp nhất khi được chia sẻ cùng ai đó.
+            </p>
+            <div class="memory-emotion">🏍️ Tự do trên đường</div>
+        </div>
+    </div>
+
+    <!-- Memory 8 — Concert/Event -->
+    <div class="memory-card reverse" id="mem8" data-index="8">
+        <div class="memory-media-wrap">
+            <div class="memory-number">08</div>
+            <img src="z8022019250538_706cd76fd32e487d9a567cddf62d0ba3.jpg" alt="Sự kiện âm nhạc" class="memory-img" loading="lazy">
+            <div class="memory-img-overlay"></div>
+            <div class="polaroid-tape tape-right"></div>
+        </div>
+        <div class="memory-info">
+            <div class="memory-tag">🎵 Âm nhạc</div>
+            <h3 class="memory-title">Đêm Nhạc Đáng Nhớ</h3>
+            <p class="memory-text">
+                Ánh đèn sân khấu rực rỡ, âm thanh vang vọng — khoảnh khắc chứng minh rằng chúng ta không chỉ học, chúng ta còn sống. Những buổi tối như thế này là điểm nhấn của cả một tuổi thanh xuân. Âm nhạc kết nối, âm nhạc giữ lại những gì đẹp nhất.
+            </p>
+            <div class="memory-emotion">🎤 Sống hết mình</div>
+        </div>
+    </div>
+
+    <!-- PHOTO WALL -->
+    <div class="photo-wall-section" id="photo-wall">
+        <div class="pw-header">
+            <h2 class="pw-title">🖼️ Bức Tường Kỷ Niệm</h2>
+            <p class="pw-sub">Nhấn vào ảnh để phóng to</p>
+        </div>
+        <div class="photo-grid">
+            <div class="photo-item pgi-1" onclick="openLightbox(0)">
+                <img src="z8022019183566_df59fa0b2b99f079d78655c90b3bf5e1.jpg" alt="Memory 1" loading="lazy">
+                <div class="photo-hover-label">Ngày Khai Giảng</div>
+            </div>
+            <div class="photo-item pgi-2" onclick="openLightbox(1)">
+                <img src="z8022019193137_f0a7cd5acd798e01416c81cc298a31a0.jpg" alt="Memory 2" loading="lazy">
+                <div class="photo-hover-label">Giờ Học Vui Vẻ</div>
+            </div>
+            <div class="photo-item pgi-3" onclick="openLightbox(2)">
+                <img src="z8022019193309_b02f86b6fc7a8e8736ec757e6dd982c8.jpg" alt="Memory 3" loading="lazy">
+                <div class="photo-hover-label">Đêm Khuya</div>
+            </div>
+            <div class="photo-item pgi-4" onclick="openLightbox(3)">
+                <img src="z8022019195044_72a3a3ff26d5523cc740d19a72c4de99.jpg" alt="Memory 4" loading="lazy">
+                <div class="photo-hover-label">Sinh Nhật</div>
+            </div>
+            <div class="photo-item pgi-5" onclick="openLightbox(4)">
+                <img src="z8022019205489_a7803dcdee851dfa3d24c183982eb435.jpg" alt="Memory 5" loading="lazy">
+                <div class="photo-hover-label">Bộ Đôi</div>
+            </div>
+            <div class="photo-item pgi-6" onclick="openLightbox(5)">
+                <img src="z8022019231174_f03060d8ffcab162d3aab101ee12406d.jpg" alt="Memory 6" loading="lazy">
+                <div class="photo-hover-label">Vỉa Hè</div>
+            </div>
+            <div class="photo-item pgi-7" onclick="openLightbox(6)">
+                <img src="z8022019233360_cc3aafa72ad560c7715f328b23691811.jpg" alt="Memory 7" loading="lazy">
+                <div class="photo-hover-label">Road Trip</div>
+            </div>
+            <div class="photo-item pgi-8" onclick="openLightbox(7)">
+                <img src="z8022019250538_706cd76fd32e487d9a567cddf62d0ba3.jpg" alt="Memory 8" loading="lazy">
+                <div class="photo-hover-label">Đêm Nhạc</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FINAL CLOSING -->
+    <div class="final-section" id="final-section">
+        <div class="final-particles"></div>
+        <div class="final-content">
+            <div class="final-film-frame">
+                <div class="fff-hole-row top-holes">
+                    <span></span><span></span><span></span><span></span><span></span><span></span>
+                </div>
+                <div class="final-quote">
+                    <span class="fq-open">"</span>
+                    <p>Có những điều không thể giữ lại — nhưng có những người, dù thời gian trôi qua, vẫn luôn là một phần không thể thiếu của nhau.</p>
+                    <span class="fq-close">"</span>
+                </div>
+                <div class="final-group-name">✦ Nhóm Bạn Thân — ĐH Hạ Long 2024 ✦</div>
+                <div class="final-sub">Cảm ơn vì những ngày tháng tuyệt vời này.</div>
+                <div class="fff-hole-row bottom-holes">
+                    <span></span><span></span><span></span><span></span><span></span><span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<!-- ===== LIGHTBOX ===== -->
+<div id="lightbox" class="lightbox-overlay">
+    <button class="lb-close" id="lb-close">✕</button>
+    <button class="lb-nav lb-prev" id="lb-prev">‹</button>
+    <div class="lb-content">
+        <img id="lb-img" src="" alt="">
+        <p id="lb-caption" class="lb-caption"></p>
+    </div>
+    <button class="lb-nav lb-next" id="lb-next">›</button>
+</div>
+
+<!-- ===== AUDIO CONTROLS ===== -->
+<div id="audio-widget" class="audio-widget hidden">
+    <div class="aw-visualizer">
+        <span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <div class="aw-info">
+        <span class="aw-title">Có Hẹn Với Thanh Xuân</span>
+        <span class="aw-artist">MONSTAR</span>
+    </div>
+    <button id="aw-toggle" class="aw-btn" title="Tắt/Mở nhạc">🔊</button>
+</div>
+
+<!-- ===== PROGRESS BAR ===== -->
+<div id="page-progress"></div>
+
+<!-- ===== AUDIO ===== -->
+<audio id="bg-music" src="có hẹn với thanh xuân - MONSTAR  official music video.mp3" loop></audio>
+
+<script src="script.js"></script>
 </body>
 </html>
